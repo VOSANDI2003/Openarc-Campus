@@ -56,9 +56,8 @@ export default function Login({ status }: LoginProps) {
                                             href={request()}
                                             className="ml-auto text-sm text-blue-400"
                                             tabIndex={5}
-                                            
-                                        >    
-                                            Forgot password?
+                                        >
+                                        Forgot password?
                                         </TextLink>
                                     )}
                                     
