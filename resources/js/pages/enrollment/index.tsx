@@ -64,8 +64,7 @@ export default function EnrollmentIndex() {
     } = usePage<Props>().props as unknown as Props & { errors: Record<string, string> };
 
     // Read flash success from Inertia shared data
-    const flash = (usePage().props as any).flash as { success?: string } | undefined;
-
+    const { flash } = usePage<Props>().props;
     const handleEnroll = () => {
         if (window.confirm('Are you sure you want to enroll for this semester?')) {
             router.post('/enrollment');
