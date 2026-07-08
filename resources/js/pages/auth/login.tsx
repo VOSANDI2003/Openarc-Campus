@@ -51,15 +51,13 @@ export default function Login({ status }: LoginProps) {
                                 <div className="flex items-center ">
                                     <Label htmlFor="password">Password</Label>
 
-                                    {true && (
-                                        <TextLink
+                                    <TextLink
                                             href={request()}
                                             className="ml-auto text-sm text-blue-400"
                                             tabIndex={5}
-                                        >
-                                        Forgot password?
-                                        </TextLink>
-                                    )}
+                                    >
+                                    Forgot password?
+                                    </TextLink>
                                     
                                 </div>
                                 <Input
