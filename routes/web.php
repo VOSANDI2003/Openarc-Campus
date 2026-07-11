@@ -11,6 +11,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\FeeVerificationController;
 use App\Http\Controllers\FeeStatusController;
 use App\Http\Controllers\SemesterController;
+use App\Http\Controllers\Admin\ReportController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -68,7 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Enrollment
     Route::get('/enrollment',  [EnrollmentController::class, 'index'])->name('enrollment.index');
-    Route::post('/enrollment', [EnrollmentController::class, 'store'])->name('enrollment.store');
+   Route::post('/enrollment', [EnrollmentController::class, 'store'])->name('enrollment.store');
 
     //Fee Verification
     Route::get('/fee-verification',          [FeeVerificationController::class, 'index'])->name('fee-verification.index');
@@ -86,6 +87,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/semesters/{id}/toggle',  [SemesterController::class, 'toggleActive'])->name('semester.toggle');
     Route::delete('/semesters/{id}',      [SemesterController::class, 'destroy'])->name('semester.destroy');
 
+    // Reports
+    Route::get('/reports/students',            [ReportController::class, 'studentList'])->name('reports.students');
+    Route::get('/reports/enrollment-summary',  [ReportController::class, 'enrollmentSummary'])->name('reports.enrollment-summary');
+    Route::get('/reports/students/pdf',            [ReportController::class, 'downloadStudentListPdf'])->name('reports.students.pdf');
+    Route::get('/reports/enrollment-summary/pdf',   [ReportController::class, 'downloadEnrollmentSummaryPdf'])->name('reports.enrollment-summary.pdf');
 });
 
 require __DIR__.'/settings.php';

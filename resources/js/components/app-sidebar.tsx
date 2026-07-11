@@ -26,6 +26,7 @@ import {
     BadgeDollarSign,
     GraduationCap,
     CalendarDays,
+    BarChart3,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -38,6 +39,8 @@ const superAdminNavItems: NavItem[] = [
     { title: 'Lecturer',    href: '/lecturers',    icon: LucideUser },
     { title: 'Student',     href: '/students',     icon: Users },
     { title: 'Semesters', href: '/semesters', icon: CalendarDays },
+    { title: 'Student List Report', href: '/reports/students', icon: ClipboardList },
+    { title: 'Enrollment Summary',  href: '/reports/enrollment-summary', icon: BarChart3 },
 ];
 
 // ── Admin ──────────────────────────────────────────────────────────────────────
@@ -47,6 +50,8 @@ const adminNavItems: NavItem[] = [
     { title: 'Lecturer',   href: '/lecturers',   icon: LucideUser },
     { title: 'Student',    href: '/students',    icon: Users },
     { title: 'Semesters', href: '/semesters', icon: CalendarDays },
+    { title: 'Student List Report', href: '/reports/students', icon: ClipboardList },
+    { title: 'Enrollment Summary',  href: '/reports/enrollment-summary', icon: BarChart3 },
 ];
 
 // ── Front Desk ─────────────────────────────────────────────────────────────────

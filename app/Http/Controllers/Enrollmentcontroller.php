@@ -12,20 +12,23 @@ use Inertia\Inertia;
 class EnrollmentController extends Controller
 {
     /**
-     * Find the correct active semester for a student.
-     * Matches by semester number in semester_name, falls back to any active semester.
+     * Find the correct active semester for a student — the one tied to
+     * their MOST RECENT fee payment, not just any semester they've ever paid for.
      */
     private function getStudentSemester(Student $student): ?Semester
     {
-        // First try to find an active semester that has payments for this student
-        $semesterWithPayment = Semester::where('is_active', true)
-            ->whereHas('feePayments', function ($q) use ($student) {
-                $q->where('student_id', $student->id);
-            })
+        $latestPayment = FeePayment::where('student_id', $student->id)
+            ->orderByDesc('created_at')
             ->first();
 
-        if ($semesterWithPayment) {
-            return $semesterWithPayment;
+        if ($latestPayment) {
+            $semester = Semester::where('is_active', true)
+                ->where('id', $latestPayment->semester_id)
+                ->first();
+
+            if ($semester) {
+                return $semester;
+            }
         }
 
         // Otherwise match by semester number in name
@@ -44,14 +47,13 @@ class EnrollmentController extends Controller
     /**
      * Student views the enrollment page.
      */
-    /*public function index()
+    public function index()
     {
         $user    = auth()->user();
         $student = Student::where('user_id', $user->id)->firstOrFail();
 
         $semester = $this->getStudentSemester($student);
 
-        // Format dates
         if ($semester) {
             $semester->start_date = $semester->start_date->format('Y-m-d');
             $semester->end_date   = $semester->end_date->format('Y-m-d');
@@ -91,7 +93,7 @@ class EnrollmentController extends Controller
             'payments'        => $payments,
             'enrollment'      => $enrollment,
         ]);
-    }*/
+    }
 
     /**
      * Student confirms enrollment.
@@ -102,7 +104,6 @@ class EnrollmentController extends Controller
         $user    = auth()->user();
         $student = Student::where('user_id', $user->id)->firstOrFail();
 
-        // Use same semester detection logic as index()
         $semester = $this->getStudentSemester($student);
 
         if (!$semester) {
@@ -111,7 +112,6 @@ class EnrollmentController extends Controller
             ]);
         }
 
-        // At least 1 installment must be paid
         $paidCount = FeePayment::where('student_id', $student->id)
             ->where('semester_id', $semester->id)
             ->count();
@@ -122,7 +122,6 @@ class EnrollmentController extends Controller
             ]);
         }
 
-        // Check if already enrolled
         $existing = Enrollment::where('student_id', $student->id)
             ->where('semester_id', $semester->id)
             ->first();
@@ -133,7 +132,6 @@ class EnrollmentController extends Controller
             ]);
         }
 
-        // Create enrollment
         Enrollment::create([
             'student_id'      => $student->id,
             'semester_id'     => $semester->id,
@@ -141,10 +139,14 @@ class EnrollmentController extends Controller
             'status'          => 'enrolled',
         ]);
 
-        // Auto-update student semester level
-        $student->update([
-            'current_semester' => $student->current_semester + 1,
-        ]);
+        // Only promote if this semester is actually ahead of current —
+        // same safeguard as FeeVerificationController::verify(), so both
+        // paths behave consistently and can't double-increment.
+        if ($semester->semester_level > $student->current_semester) {
+            $student->update([
+                'current_semester' => $semester->semester_level,
+            ]);
+        }
 
         return redirect()->route('enrollment.index')
                          ->with('success', 'You have successfully enrolled for ' . $semester->semester_name . '!');
