@@ -13,10 +13,9 @@ import { Form, Head } from '@inertiajs/react';
 
 interface LoginProps {
     status?: string;
-    canResetPassword: boolean;
 }
 
-export default function Login({ status, canResetPassword }: LoginProps) {
+export default function Login({ status }: LoginProps) {
     return (
         
         <AuthLayout
@@ -52,16 +51,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 <div className="flex items-center ">
                                     <Label htmlFor="password">Password</Label>
 
-                                    {true && (
-                                        <TextLink
+                                    <TextLink
                                             href={request()}
                                             className="ml-auto text-sm text-blue-400"
                                             tabIndex={5}
-                                            
-                                        >    
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
+                                    >
+                                    Forgot password?
+                                    </TextLink>
                                     
                                 </div>
                                 <Input

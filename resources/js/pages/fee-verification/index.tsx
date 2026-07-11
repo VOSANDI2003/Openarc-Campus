@@ -72,10 +72,13 @@ export default function FeeVerificationIndex() {
 
     // Auto-select the first unpaid installment whenever payments change
     useEffect(() => {
-        if (unpaidNums.length > 0) {
-            setForm(f => ({ ...f, installment_number: unpaidNums[0].toString() }));
-        }
-    }, [payments]);
+    if (unpaidNums.length > 0) {
+        setForm(f => ({
+            ...f,
+            installment_number: unpaidNums[0].toString(),
+        }));
+    }
+}, [payments, unpaidNums]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
