@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
+// This controller handles the management of lecturers, allowing admins to add, update, and delete lecturer users.
 class LecturerController extends Controller
 {
     public function index()

@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// This migration creates the 'enrollments' table, which tracks student enrollments in specific semesters.
 return new class extends Migration
 {
     public function up(): void

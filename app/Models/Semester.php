@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// This model represents a semester in the academic system,
+// storing information about the semester's name, academic year, start and end dates, and its active status.
 class Semester extends Model
 {
     protected $primaryKey = 'id';

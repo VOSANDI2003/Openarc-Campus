@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// This model represents a fee payment record, 
+// linking a student to a specific semester and tracking their payment details.
 class FeePayment extends Model
 {
     protected $primaryKey = 'id';

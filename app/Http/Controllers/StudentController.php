@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
+// This controller handles the management of students, allowing admins to add, update, and delete student users.
 class StudentController extends Controller
 {
     public function index()
@@ -39,7 +40,7 @@ class StudentController extends Controller
                 // Already registered — just ensure role is student
                 $user->update(['role' => 'student']);
             } else {
-                // New user — create account
+                // New user - create account
                 $user = User::create([
                     'name'     => $validated['full_name'],
                     'email'    => $validated['email'],
@@ -48,6 +49,7 @@ class StudentController extends Controller
                 ]);
             }
 
+            // Create the student record linked to the user
             Student::create([
                 'user_id'          => $user->id,
                 'index_no'         => $validated['index_no'],
@@ -64,7 +66,7 @@ class StudentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $student = Student::findOrFail($id);
+        $student = Student::findOrFail($id);            // Retrieve the student record to be updated
 
         $validated = $request->validate([
             'index_no'         => 'required|string|max:20|unique:students,index_no,' . $id,
@@ -87,7 +89,7 @@ class StudentController extends Controller
                          ->with('success', 'Student updated successfully!');
     }
 
-    public function destroy($id)
+    public function destroy($id)                                  //Delete a student and their associated user account
     {
         $student = Student::with('user')->findOrFail($id);
 

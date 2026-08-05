@@ -29,7 +29,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 <Form {...PasswordResetLinkController.store.form()}>
                     {({ processing, errors }) => (
                         <>
-                            <div className="grid gap-2 text-blue-900">
+                            <div className="grid gap-2 text-blue-700">
                                 <Label htmlFor="email">Email address</Label>
                                 <Input
                                     id="email"

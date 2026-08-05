@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// This model represents a student in the system, 
+// linking to the User model for authentication and storing additional student information.
 class Student extends Model
 {
     protected $primaryKey = 'id';
@@ -17,8 +19,7 @@ class Student extends Model
         'current_semester',
     ];
 
-    // ── Relationships ──────────────────────────────────────────────────────────
-
+    // Relationships 
     public function user()
     {
         return $this->belongsTo(User::class);

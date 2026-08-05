@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// This model represents an admin user in the system, 
+// linking to the User model for authentication and storing additional admin-specific information.
 class Admin extends Model
 {
     protected $primaryKey = 'id';
@@ -15,7 +17,7 @@ class Admin extends Model
         'email',
     ];
 
-    // ── Relationships ──────────────────────────────────────────────────────────
+    //Relationships 
 
     public function user()
     {

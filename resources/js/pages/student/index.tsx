@@ -1,13 +1,14 @@
-import AppLayout from '@/layouts/app-layout';
-import { router, usePage } from '@inertiajs/react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout'; //common wrapper of the page
+import { router, usePage } from '@inertiajs/react'; //send POST/PUT/DELETE requests without reload page(laravel), read props sent from laravel (route)in here students list
+import { Card } from '@/components/ui/card'; //common card wrapper
+import { Button } from '@/components/ui/button'; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState } from 'react'; //store values that change over time in the component
 import { type BreadcrumbItem } from '@/types';
 
+//This shows what fields a Student has (no effect on runtime, just to check typescript type)
 interface Student {
     id: number;
     user_id: number;
@@ -22,6 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Students', href: '/students' },
 ];
 
+//default state of the form(blank)
 const emptyForm = {
     index_no: '',
     full_name: '',
@@ -31,18 +33,22 @@ const emptyForm = {
     password: '',
 };
 
+//adding optional id alike empty format shape(omly use when edit)
 type FormState = typeof emptyForm & { id?: number };
 
 export default function StudentIndex() {
     const { students } = usePage<{ students?: Student[] }>().props;
     const studentList = students ?? [];
 
-    const [open, setOpen]     = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [form, setForm]     = useState<FormState>(emptyForm);
-    const [search, setSearch] = useState('');
-    const [errors, setErrors] = useState<Record<string, string>>({});
 
+    
+    const [open, setOpen]     = useState(false);                        //add edit dialog(popup)
+    const [isEdit, setIsEdit] = useState(false);                        //edit mode or add mode
+    const [form, setForm]     = useState<FormState>(emptyForm);         //vlaues thet are typed in the form
+    const [search, setSearch] = useState('');                           //search term typed in the search box
+    const [errors, setErrors] = useState<Record<string, string>>({});   //validation error messages came from laravel according to field name, e.g. { full_name: "Full Name is required" }
+
+    //resets the form to blank, marks it as "not edit mode," opens the dialog.
     const handleOpenAdd = () => {
         setForm(emptyForm);
         setErrors({});
@@ -50,6 +56,7 @@ export default function StudentIndex() {
         setOpen(true);
     };
 
+    //fills the form with the selected student's data, marks it as "edit mode," opens the dialog.
     const handleOpenEdit = (s: Student) => {
         setForm({
             id: s.id,
@@ -65,6 +72,7 @@ export default function StudentIndex() {
         setOpen(true);
     };
 
+    //closes the dialog and resets everything.
     const handleClose = () => {
         setOpen(false);
         setForm(emptyForm);
@@ -72,6 +80,7 @@ export default function StudentIndex() {
         setIsEdit(false);
     };
 
+    //runs every time you type in any input field.
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.name === 'current_semester'
             ? Number(e.target.value)
@@ -79,7 +88,7 @@ export default function StudentIndex() {
         setForm({ ...form, [e.target.name]: value });
         if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
     };
-
+    //runs when you click Add/Update
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (isEdit && form.id) {
@@ -95,12 +104,14 @@ export default function StudentIndex() {
         }
     };
 
+    //runs when you click Delete on a student row. Asks for confirmation, then sends a DELETE request to the server.
     const handleDelete = (id: number) => {
         if (window.confirm('Are you sure you want to delete this student?')) {
             router.delete(`/students/${id}`);
         }
     };
 
+    //filter the student list based on the search term (index number, name, email, contact). this completely happens on browser not sending req to server. so it is fast.
     const filtered = studentList.filter(s => {
         const term = search.toLowerCase();
         return (
@@ -112,6 +123,7 @@ export default function StudentIndex() {
     });
 
     return (
+        // The AppLayout component likely includes the main layout of the page, including navigation, header.
         <AppLayout breadcrumbs={breadcrumbs}>
             <Card className="p-6 mt-6">
                 <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
@@ -123,6 +135,7 @@ export default function StudentIndex() {
                             onChange={e => setSearch(e.target.value)}
                             className="w-56"
                         />
+                        
                         <Button onClick={handleOpenAdd}>Add Student</Button>
                     </div>
                 </div>
@@ -148,6 +161,7 @@ export default function StudentIndex() {
                                     </td>
                                 </tr>
                             ) : (
+                                // Maps over the filtered list of students and renders a table row for each student.
                                 filtered.map((s, index) => (
                                     <tr key={s.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
                                         <td className="px-4 py-2">{index + 1}</td>
@@ -167,8 +181,8 @@ export default function StudentIndex() {
                     </table>
                 </div>
             </Card>
-
-            <Dialog open={open} onOpenChange={setOpen}>
+            
+            <Dialog open={open} onOpenChange={setOpen}>             
                 <DialogContent className="max-w-md">
                     <DialogHeader>
                         <DialogTitle>{isEdit ? 'Update Student' : 'Add Student'}</DialogTitle>

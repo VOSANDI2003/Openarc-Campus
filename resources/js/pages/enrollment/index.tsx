@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
+//shows navigation path on top of the page
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Enrollment', href: '/enrollment' },

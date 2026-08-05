@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// This model represents a lecturer in the system, 
+// linking to the User model for authentication and storing additional lecturer-specific information.
 class Lecturer extends Model
 {
     protected $primaryKey = 'id';
@@ -17,7 +19,7 @@ class Lecturer extends Model
         'subject',
     ];
 
-    // ── Relationships ──────────────────────────────────────────────────────────
+    // Relationships 
 
     public function user()
     {

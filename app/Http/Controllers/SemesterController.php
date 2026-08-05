@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Semester;
 use Inertia\Inertia;
 
+// This controller handles the management of semesters, allowing admins to create, update, activate/deactivate, and delete semester records.
 class SemesterController extends Controller
 {
     public function index()

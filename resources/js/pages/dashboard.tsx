@@ -71,11 +71,11 @@ export default function Dashboard() {
             <>
                 <div className="rounded-xl border border-sidebar-border bg-background p-6 shadow-sm flex items-start justify-between">
                     <div>
-                        <h2 className="text-lg font-semibold text-white mb-1">Hello, {student.full_name} 👋</h2>
+                        <h2 className="text-lg font-semibold text-amber-500 mb-1">Hello, {student.full_name} 👋</h2>
                         <p className="text-sm text-muted-foreground">Here is your academic summary.</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-sm font-medium text-white">{formattedDate}</p>
+                        <p className="text-sm font-medium text-amber-500">{formattedDate}</p>
                         <p className="text-sm text-muted-foreground">{formattedTime}</p>
                     </div>
                 </div>
@@ -123,11 +123,11 @@ export default function Dashboard() {
                     <>
                         <div className="rounded-xl border border-sidebar-border bg-background p-6 shadow-sm flex items-start justify-between">
                             <div>
-                                <h2 className="text-lg font-semibold text-white mb-1">Hello, {userName} 👋</h2>
+                                <h2 className="text-lg font-semibold text-amber-500 mb-1">Hello, {userName} 👋</h2>
                                 <p className="text-sm text-muted-foreground">Here is your admin summary.</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-medium text-white">{formattedDate}</p>
+                                <p className="text-sm font-medium text-amber-500">{formattedDate}</p>
                                 <p className="text-sm text-muted-foreground">{formattedTime}</p>
                             </div>
                         </div>
@@ -154,11 +154,11 @@ export default function Dashboard() {
                     <>
                         <div className="rounded-xl border border-sidebar-border bg-background p-6 shadow-sm flex items-start justify-between">
                             <div>
-                                <h2 className="text-lg font-semibold text-white mb-1">Hello, {userName} 👋</h2>
+                                <h2 className="text-lg font-semibold text-amber-500 mb-1">Hello, {userName} 👋</h2>
                                 <p className="text-sm text-muted-foreground">Here is your front desk summary.</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-medium text-white">{formattedDate}</p>
+                                <p className="text-sm font-medium text-amber-500">{formattedDate}</p>
                                 <p className="text-sm text-muted-foreground">{formattedTime}</p>
                             </div>
                         </div>
@@ -185,11 +185,11 @@ export default function Dashboard() {
                     <>
                         <div className="rounded-xl border border-sidebar-border bg-background p-6 shadow-sm flex items-start justify-between">
                             <div>
-                                <h2 className="text-lg font-semibold text-white mb-1">Hello, {userName} 👋</h2>
+                                <h2 className="text-lg font-semibold text-amber-500 mb-1">Hello, {userName} 👋</h2>
                                 <p className="text-sm text-muted-foreground">Here is your lecturer summary.</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-medium text-white">{formattedDate}</p>
+                                <p className="text-sm font-medium text-amber-500">{formattedDate}</p>
                                 <p className="text-sm text-muted-foreground">{formattedTime}</p>
                             </div>
                         </div>

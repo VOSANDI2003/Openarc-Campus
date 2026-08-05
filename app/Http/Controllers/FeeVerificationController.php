@@ -10,6 +10,7 @@ use App\Models\Student;
 use App\Models\Semester;
 use Inertia\Inertia;
 
+// This controller handles the fee verification process for Front Desk staff, allowing them to verify student payments and enroll students in semesters.
 class FeeVerificationController extends Controller
 {
     public function index()
@@ -25,7 +26,7 @@ class FeeVerificationController extends Controller
         ]);
     }
 
-    public function search(Request $request)
+    public function search(Request $request) //Search for a student by index number and semester, displaying their payment history for that semester
     {
         $request->validate([
             'index_no'    => 'required|string',
@@ -54,7 +55,7 @@ class FeeVerificationController extends Controller
         ]);
     }
 
-    public function verify(Request $request)
+    public function verify(Request $request)  //Verify a student's payment and enroll them in the semester if not already enrolled
     {
         $request->validate([
             'student_id'   => 'required|integer|exists:students,id',
@@ -76,7 +77,7 @@ class FeeVerificationController extends Controller
 
         DB::transaction(function () use ($request, $semester, $student) {
 
-            // ── 1. Record payment(s) ────────────────────────────────────────
+            // Record payment 
             if ($request->payment_type === 'full') {
                 $splitAmount = round($request->amount / 3, 2);
                 foreach ([1, 2, 3] as $num) {
@@ -116,7 +117,7 @@ class FeeVerificationController extends Controller
                 );
             }
 
-            // ── 2. Enroll student in the semester if not already enrolled ───
+            // Enroll student in the semester if not already enrolled
             // Triggered by any payment (installment 1, or full payment).
             // updateOrCreate prevents duplicate enrollment records.
             Enrollment::updateOrCreate(
@@ -130,7 +131,7 @@ class FeeVerificationController extends Controller
                 ]
             );
 
-            // ── 3. Update student's active semester ─────────────────────────
+            //Update student's active semester
             // Only promote current_semester if the paid semester is ahead
             // of what the student is currently on, preventing accidental
             // downgrades (e.g. paying a missed old-semester installment).

@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Semester;
 use Inertia\Inertia;
 
+// This controller handles the fee status page for students, showing their payment history and status.
 class FeeStatusController extends Controller
 {
 public function index()

@@ -37,6 +37,8 @@ class Super_AdminController extends Controller
             'role'     => 'super_admin',
         ]);
 
+
+        // Create the SuperAdmin record linked to the User
         SuperAdmin::create([
             'user_id'      => $user->id,
             'employee_id'  => $validated['employee_id'],

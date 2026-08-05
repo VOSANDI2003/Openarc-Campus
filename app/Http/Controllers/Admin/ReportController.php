@@ -32,7 +32,7 @@ class ReportController extends Controller
             ->orderBy('index_no')
             ->get();
 
-        $availableSemesters = Student::query()
+        $availableSemesters = Student::query() 
             ->select('current_semester')
             ->distinct()
             ->orderBy('current_semester')

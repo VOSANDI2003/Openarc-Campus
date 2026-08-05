@@ -19,7 +19,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request) //Store a new admin
     {
         $validated = $request->validate([
             'employee_id' => 'required|string|max:20|unique:admins',

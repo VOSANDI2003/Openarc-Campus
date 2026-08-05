@@ -65,20 +65,25 @@ export default function FeeVerificationIndex() {
     const [semesterId, setSemesterId] = useState(selectedSemester?.id?.toString() ?? '');
     const [form, setForm]             = useState(emptyForm);
 
-    // Compute unpaid installments from current payments
+    // Compute unpaid installments from current payments (safe to recompute every render — used only for display)
     const paidNumbers = payments.map(p => p.installment_number);
     const allPaid     = paidNumbers.length === 3;
     const unpaidNums  = [1, 2, 3].filter(n => !paidNumbers.includes(n));
 
-    // Auto-select the first unpaid installment whenever payments change
+    // Auto-select the first unpaid installment whenever payments change.
+    // FIX: depend only on `payments` (a stable prop reference from the server),
+    // and recompute unpaid numbers INSIDE the effect. Depending on `unpaidNums`
+    // directly caused an infinite loop, since it's a new array every render.
     useEffect(() => {
-    if (unpaidNums.length > 0) {
-        setForm(f => ({
-            ...f,
-            installment_number: unpaidNums[0].toString(),
-        }));
-    }
-}, [payments, unpaidNums]);
+        const paid = payments.map(p => p.installment_number);
+        const unpaid = [1, 2, 3].filter(n => !paid.includes(n));
+        if (unpaid.length > 0) {
+            setForm(f => ({
+                ...f,
+                installment_number: unpaid[0].toString(),
+            }));
+        }
+    }, [payments]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -111,7 +116,6 @@ export default function FeeVerificationIndex() {
                 valid_to:           form.valid_to,
             }, {
                 onSuccess: () => {
-                    // Reset amount and dates but keep payment_type
                     setForm(f => ({
                         ...f,
                         amount:    '',

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
+// This controller handles the management of Front Desk staff, allowing admins to add, update, and delete front desk users.
 class Front_DeskController extends Controller
 {
     public function index()

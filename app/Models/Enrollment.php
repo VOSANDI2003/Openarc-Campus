@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// This model represents an enrollment record, 
+// linking a student to a specific semester and tracking their enrollment status.
 class Enrollment extends Model
 {
     protected $primaryKey = 'id';
