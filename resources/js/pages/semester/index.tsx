@@ -45,6 +45,13 @@ export default function SemesterIndex() {
     const [isEdit, setIsEdit] = useState(false);
     const [form, setForm]     = useState<FormState>(emptyForm);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [search, setSearch] = useState('');
+
+    // Filter semesters by name or academic year
+    const filteredSemesters = semesterList.filter((s) =>
+        s.semester_name.toLowerCase().includes(search.toLowerCase()) ||
+        s.academic_year.toLowerCase().includes(search.toLowerCase())
+    );
 
     const handleOpenAdd = () => {
         setForm(emptyForm);
@@ -117,6 +124,17 @@ export default function SemesterIndex() {
                         <Button onClick={handleOpenAdd}>Add Semester</Button>
                     </div>
 
+                    {/* Search bar */}
+                    <div className="mb-4">
+                        <Input
+                            type="text"
+                            placeholder="Search by semester name or academic year..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="max-w-sm"
+                        />
+                    </div>
+
                     <div className="overflow-x-auto">
                         <table className="min-w-full border text-sm rounded-lg">
                             <thead className="bg-gray-100 dark:bg-neutral-800">
@@ -131,14 +149,14 @@ export default function SemesterIndex() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {semesterList.length === 0 ? (
+                                {filteredSemesters.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
+                                        <td colSpan={7} className="px-4 py-6 text-center text-gray-400">
                                             No semesters found.
                                         </td>
                                     </tr>
                                 ) : (
-                                    semesterList.map((s, index) => (
+                                    filteredSemesters.map((s, index) => (
                                         <tr key={s.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
                                             <td className="px-4 py-2">{index + 1}</td>
                                             <td className="px-4 py-2 font-medium">{s.semester_name}</td>

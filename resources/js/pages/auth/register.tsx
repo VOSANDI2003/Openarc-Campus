@@ -34,7 +34,7 @@ export default function Register() {
                                     required
                                     autoFocus
                                     tabIndex={1}
-                                    autoComplete="name"
+                                    autoComplete="name" //their name from a previous form they filled out,( if they have filled before)
                                     name="name"
                                     placeholder="Full name"
                                 />
