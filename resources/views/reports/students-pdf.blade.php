@@ -8,9 +8,9 @@
         h1 { font-size: 18px; margin-bottom: 2px; }
         p.meta { color: #666; margin-top: 0; margin-bottom: 16px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+        th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; } /*draw a 1px solid light-gray border.*/
         th { background-color: #f0f0f0; }
-        tr:nth-child(even) { background-color: #fafafa; }
+        tr:nth-child(even) { background-color: #fafafa; }   /*RGB = (250, 250, 250)*/
     </style>
 </head>
 <body>

@@ -14,6 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Semesters', href: '/semesters' },
 ];
 
+// Define the Semester interface to represent a semester object
 interface Semester {
     id: number;
     semester_name: string;
@@ -60,6 +61,7 @@ export default function SemesterIndex() {
         setOpen(true);
     };
 
+    // Handle opening the edit dialog with the selected semester's data
     const handleOpenEdit = (s: Semester) => {
         setForm({
             id:            s.id,
