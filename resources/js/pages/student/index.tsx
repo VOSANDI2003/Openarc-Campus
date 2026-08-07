@@ -19,6 +19,14 @@ interface Student {
     current_semester: number;
 }
 
+// `flash` carries one-off success messages set via ->with('success', ...)
+// on the backend, for both the add (store) and update actions.
+interface Props {
+    students?: Student[];
+    flash?: { success?: string };
+    [key: string]: unknown;
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Students', href: '/students' },
 ];
@@ -37,7 +45,7 @@ const emptyForm = {
 type FormState = typeof emptyForm & { id?: number };
 
 export default function StudentIndex() {
-    const { students } = usePage<{ students?: Student[] }>().props;
+    const { students, flash } = usePage<Props>().props;
     const studentList = students ?? [];
 
 
@@ -88,7 +96,8 @@ export default function StudentIndex() {
         setForm({ ...form, [e.target.name]: value });
         if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
     };
-    //runs when you click Add/Update
+    //runs when you click Add/Update. Backend flashes 'success' for both actions,
+    //which the banner below reads via flash.success.
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (isEdit && form.id) {
@@ -125,62 +134,71 @@ export default function StudentIndex() {
     return (
         // The AppLayout component likely includes the main layout of the page, including navigation, header.
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Card className="p-6 mt-6">
-                <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
-                    <h1 className="text-2xl font-bold">Students</h1>
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder="Search students…"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-56"
-                        />
-                        
-                        <Button onClick={handleOpenAdd}>Add Student</Button>
+            <div className="p-6">
+                {/* Flash success banner — shown after both Add and Update actions */}
+                {flash?.success && (
+                    <div className="mb-4 rounded-lg bg-green-50 border border-green-300 p-4 text-green-700 font-medium">
+                        ✓ {flash.success}
                     </div>
-                </div>
+                )}
 
-                <div className="overflow-x-auto">
-                    <table className="min-w-full border text-sm rounded-lg">
-                        <thead className="bg-gray-100 dark:bg-neutral-800">
-                            <tr>
-                                <th className="px-4 py-2 text-left font-semibold">ID</th>
-                                <th className="px-4 py-2 text-left font-semibold">Index No</th>
-                                <th className="px-4 py-2 text-left font-semibold">Full Name</th>
-                                <th className="px-4 py-2 text-left font-semibold">Email</th>
-                                <th className="px-4 py-2 text-left font-semibold">Contact</th>
-                                <th className="px-4 py-2 text-left font-semibold">Semester</th>
-                                <th className="px-4 py-2 text-left font-semibold">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered.length === 0 ? (
+                <Card className="p-6 mt-0">
+                    <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                        <h1 className="text-2xl font-bold">Students</h1>
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Search students…"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                className="w-56"
+                            />
+                            
+                            <Button onClick={handleOpenAdd}>Add Student</Button>
+                        </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full border text-sm rounded-lg">
+                            <thead className="bg-gray-100 dark:bg-neutral-800">
                                 <tr>
-                                    <td colSpan={7} className="px-4 py-6 text-center text-gray-400">
-                                        No students found.
-                                    </td>
+                                    <th className="px-4 py-2 text-left font-semibold">ID</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Index No</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Full Name</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Email</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Contact</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Semester</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Actions</th>
                                 </tr>
-                            ) : (
-                                // Maps over the filtered list of students and renders a table row for each student.
-                                filtered.map((s, index) => (
-                                    <tr key={s.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
-                                        <td className="px-4 py-2">{index + 1}</td>
-                                        <td className="px-4 py-2">{s.index_no}</td>
-                                        <td className="px-4 py-2">{s.full_name}</td>
-                                        <td className="px-4 py-2">{s.email}</td>
-                                        <td className="px-4 py-2">{s.contact}</td>
-                                        <td className="px-4 py-2">{s.current_semester}</td>
-                                        <td className="px-4 py-2 flex gap-2">
-                                            <Button size="sm" variant="outline" onClick={() => handleOpenEdit(s)}>Edit</Button>
-                                            <Button size="sm" variant="destructive" onClick={() => handleDelete(s.id)}>Delete</Button>
+                            </thead>
+                            <tbody>
+                                {filtered.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={7} className="px-4 py-6 text-center text-gray-400">
+                                            No students found.
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </Card>
+                                ) : (
+                                    // Maps over the filtered list of students and renders a table row for each student.
+                                    filtered.map((s, index) => (
+                                        <tr key={s.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
+                                            <td className="px-4 py-2">{index + 1}</td>
+                                            <td className="px-4 py-2">{s.index_no}</td>
+                                            <td className="px-4 py-2">{s.full_name}</td>
+                                            <td className="px-4 py-2">{s.email}</td>
+                                            <td className="px-4 py-2">{s.contact}</td>
+                                            <td className="px-4 py-2">{s.current_semester}</td>
+                                            <td className="px-4 py-2 flex gap-2">
+                                                <Button size="sm" variant="outline" onClick={() => handleOpenEdit(s)}>Edit</Button>
+                                                <Button size="sm" variant="destructive" onClick={() => handleDelete(s.id)}>Delete</Button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
+            </div>
             
             <Dialog open={open} onOpenChange={setOpen}>             
                 <DialogContent className="max-w-md">

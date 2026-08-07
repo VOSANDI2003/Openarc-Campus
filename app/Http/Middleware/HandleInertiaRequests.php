@@ -31,7 +31,7 @@ class HandleInertiaRequests extends Middleware
      * Define the props that are shared by default.
      *
      * @see https://inertiajs.com/shared-data
-     *
+     *git
      * @return array<string, mixed>
      */
     public function share(Request $request): array
@@ -46,6 +46,14 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+
+            // Share one-off session flash messages (set via ->with('success', ...) / ->withErrors([...]))
+            // on every Inertia response, so any page can read usePage().props.flash.success, etc.
+            // Wrapped in closures so Laravel only reads the session value when a prop is actually requested.
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error'   => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }

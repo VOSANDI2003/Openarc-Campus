@@ -17,6 +17,14 @@ interface SuperAdmin {
     access_level: string;
 }
 
+// `flash` carries one-off success messages set via ->with('success', ...)
+// on the backend, for both the add (store) and update actions.
+interface Props {
+    superAdmins?: SuperAdmin[];
+    flash?: { success?: string };
+    [key: string]: unknown;
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Super_Admin', href: '/super-admins' },
 ];
@@ -32,7 +40,7 @@ const emptyForm = {
 type FormState = typeof emptyForm & { id?: number };
 
 export default function SuperAdminIndex() {
-    const { superAdmins } = usePage<{ superAdmins?: SuperAdmin[] }>().props;
+    const { superAdmins, flash } = usePage<Props>().props;
     const superAdminList = superAdmins ?? [];
 
     const [open, setOpen]     = useState(false);
@@ -74,6 +82,7 @@ export default function SuperAdminIndex() {
         if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
     };
 
+    // Handles both add and update submissions; success flash is set on the backend for both.
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (isEdit && form.id) {
@@ -107,58 +116,67 @@ export default function SuperAdminIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Card className="p-6 mt-6">
-                <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
-                    <h1 className="text-2xl font-bold">Super Admins</h1>
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder="Search super admins…"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-56"
-                        />
-                        <Button onClick={handleOpenAdd}>Add Super Admin</Button>
+            <div className="p-6">
+                {/* Flash success banner — shown after both Add and Update actions */}
+                {flash?.success && (
+                    <div className="mb-4 rounded-lg bg-green-50 border border-green-300 p-4 text-green-700 font-medium">
+                        ✓ {flash.success}
                     </div>
-                </div>
+                )}
 
-                <div className="overflow-x-auto">
-                    <table className="min-w-full border text-sm rounded-lg">
-                        <thead className="bg-gray-100 dark:bg-neutral-800">
-                            <tr>
-                                <th className="px-4 py-2 text-left font-semibold">ID</th>
-                                <th className="px-4 py-2 text-left font-semibold">Employee ID</th>
-                                <th className="px-4 py-2 text-left font-semibold">Full Name</th>
-                                <th className="px-4 py-2 text-left font-semibold">Email</th>
-                                <th className="px-4 py-2 text-left font-semibold">Access Level</th>
-                                <th className="px-4 py-2 text-left font-semibold">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered.length === 0 ? (
+                <Card className="p-6 mt-0">
+                    <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                        <h1 className="text-2xl font-bold">Super Admins</h1>
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Search super admins…"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                className="w-56"
+                            />
+                            <Button onClick={handleOpenAdd}>Add Super Admin</Button>
+                        </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full border text-sm rounded-lg">
+                            <thead className="bg-gray-100 dark:bg-neutral-800">
                                 <tr>
-                                    <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
-                                        No super admins found.
-                                    </td>
+                                    <th className="px-4 py-2 text-left font-semibold">ID</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Employee ID</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Full Name</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Email</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Access Level</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Actions</th>
                                 </tr>
-                            ) : (
-                                filtered.map((sa, index) => (
-                                    <tr key={sa.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
-                                        <td className="px-4 py-2">{index + 1}</td>
-                                        <td className="px-4 py-2">{sa.employee_id}</td>
-                                        <td className="px-4 py-2">{sa.full_name}</td>
-                                        <td className="px-4 py-2">{sa.email}</td>
-                                        <td className="px-4 py-2">{sa.access_level}</td>
-                                        <td className="px-4 py-2 flex gap-2">
-                                            <Button size="sm" variant="outline" onClick={() => handleOpenEdit(sa)}>Edit</Button>
-                                            <Button size="sm" variant="destructive" onClick={() => handleDelete(sa.id)}>Delete</Button>
+                            </thead>
+                            <tbody>
+                                {filtered.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
+                                            No super admins found.
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </Card>
+                                ) : (
+                                    filtered.map((sa, index) => (
+                                        <tr key={sa.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
+                                            <td className="px-4 py-2">{index + 1}</td>
+                                            <td className="px-4 py-2">{sa.employee_id}</td>
+                                            <td className="px-4 py-2">{sa.full_name}</td>
+                                            <td className="px-4 py-2">{sa.email}</td>
+                                            <td className="px-4 py-2">{sa.access_level}</td>
+                                            <td className="px-4 py-2 flex gap-2">
+                                                <Button size="sm" variant="outline" onClick={() => handleOpenEdit(sa)}>Edit</Button>
+                                                <Button size="sm" variant="destructive" onClick={() => handleDelete(sa.id)}>Delete</Button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
+            </div>
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="max-w-md">

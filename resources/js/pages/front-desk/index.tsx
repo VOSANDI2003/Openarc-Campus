@@ -19,6 +19,15 @@ interface FrontDesk {
     contact: string;
 }
 
+// Props passed in from the Laravel/Inertia controller for this page.
+// `flash` carries one-off success messages set via `->with('success', ...)`
+// on the backend, for BOTH the add (store) and update actions.
+interface Props {
+    frontDesks?: FrontDesk[];
+    flash?: { success?: string };
+    [key: string]: unknown;
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Front Desk', href: '/front-desks' },
 ];
@@ -34,7 +43,8 @@ const emptyForm = {
 type FormState = typeof emptyForm & { id?: number };
 
 export default function FrontDeskIndex() {
-    const { frontDesks } = usePage<{ frontDesks?: FrontDesk[] }>().props;
+    // Pull both the front desk list AND the flash success message from Inertia page props
+    const { frontDesks, flash } = usePage<Props>().props;
     const frontDeskList = frontDesks ?? [];
 
     const [open, setOpen]     = useState(false);
@@ -76,6 +86,9 @@ export default function FrontDeskIndex() {
         if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
     };
 
+    // Handles BOTH add and update submissions.
+    // On success, the backend flashes a 'success' message (see Front_DeskController::store / ::update),
+    // which Inertia passes back down as `flash.success` and we render below.
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (isEdit && form.id) {
@@ -109,59 +122,69 @@ export default function FrontDeskIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Card className="p-6 mt-6">
-                <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
-                    <h1 className="text-2xl font-bold">Front Desk Staff</h1>
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder="Search front desk…"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-56"
-                        />
-                        <Button onClick={handleOpenAdd}>Add Front Desk</Button>
+            <div className="p-6">
+                {/* Flash success banner — shown after both Add and Update actions */}
+                {flash?.success && (
+                    <div className="mb-4 rounded-lg bg-green-50 border border-green-300 p-4 text-green-700 font-medium">
+                        ✓ {flash.success}
                     </div>
-                </div>
+                )}
 
-                <div className="overflow-x-auto">
-                    <table className="min-w-full border text-sm rounded-lg">
-                        <thead className="bg-gray-100 dark:bg-neutral-800">
-                            <tr>
-                                <th className="px-4 py-2 text-left font-semibold">ID</th>
-                                <th className="px-4 py-2 text-left font-semibold">FD ID</th>
-                                <th className="px-4 py-2 text-left font-semibold">Full Name</th>
-                                <th className="px-4 py-2 text-left font-semibold">Email</th>
-                                <th className="px-4 py-2 text-left font-semibold">Contact</th>
-                                <th className="px-4 py-2 text-left font-semibold">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered.length === 0 ? (
+                <Card className="p-6 mt-0">
+                    <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                        <h1 className="text-2xl font-bold">Front Desk Staff</h1>
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Search front desk…"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                className="w-56"
+                            />
+                            <Button onClick={handleOpenAdd}>Add Front Desk</Button>
+                        </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full border text-sm rounded-lg">
+                            <thead className="bg-gray-100 dark:bg-neutral-800">
                                 <tr>
-                                    <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
-                                        No front desk staff found.
-                                    </td>
+                                    <th className="px-4 py-2 text-left font-semibold">ID</th>
+                                    <th className="px-4 py-2 text-left font-semibold">FD ID</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Full Name</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Email</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Contact</th>
+                                    <th className="px-4 py-2 text-left font-semibold">Actions</th>
                                 </tr>
-                            ) : (
-                                filtered.map((fd, index) => (
-                                    <tr key={fd.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
-                                        <td className="px-4 py-2">{index + 1}</td>
-                                        <td className="px-4 py-2">{fd.fd_id}</td>
-                                        <td className="px-4 py-2">{fd.full_name}</td>
-                                        <td className="px-4 py-2">{fd.email}</td>
-                                        <td className="px-4 py-2">{fd.contact}</td>
-                                        <td className="px-4 py-2 flex gap-2">
-                                            <Button size="sm" variant="outline" onClick={() => handleOpenEdit(fd)}>Edit</Button>
-                                            <Button size="sm" variant="destructive" onClick={() => handleDelete(fd.id)}>Delete</Button>
+                            </thead>
+                            <tbody>
+                                {filtered.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
+                                            No front desk staff found.
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </Card>
+                                ) : (
+                                    filtered.map((fd, index) => (
+                                        <tr key={fd.id} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-700">
+                                            <td className="px-4 py-2">{index + 1}</td>
+                                            <td className="px-4 py-2">{fd.fd_id}</td>
+                                            <td className="px-4 py-2">{fd.full_name}</td>
+                                            <td className="px-4 py-2">{fd.email}</td>
+                                            <td className="px-4 py-2">{fd.contact}</td>
+                                            <td className="px-4 py-2 flex gap-2">
+                                                <Button size="sm" variant="outline" onClick={() => handleOpenEdit(fd)}>Edit</Button>
+                                                <Button size="sm" variant="destructive" onClick={() => handleDelete(fd.id)}>Delete</Button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
+            </div>
 
+            {/* Add / Edit Dialog — shared between both modes, driven by isEdit */}
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
@@ -188,6 +211,7 @@ export default function FrontDeskIndex() {
                             <Input name="contact" value={form.contact} onChange={handleChange} required />
                             {errors.contact && <p className="text-xs text-red-500 mt-1">{errors.contact}</p>}
                         </div>
+                        {/* Password field only shown on Add — not editable on Update */}
                         {!isEdit && (
                             <div>
                                 <Label>Password</Label>

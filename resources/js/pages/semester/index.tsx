@@ -24,8 +24,11 @@ interface Semester {
     is_active: boolean;
 }
 
+// `flash` carries one-off success messages set via ->with('success', ...)
+// on the backend, for add, update, toggle, and delete actions.
 interface Props {
     semesters: Semester[];
+    flash?: { success?: string };
     [key: string]: unknown;
 }
 
@@ -39,7 +42,7 @@ const emptyForm = {
 type FormState = typeof emptyForm & { id?: number };
 
 export default function SemesterIndex() {
-    const { semesters } = usePage<Props>().props as unknown as Props;
+    const { semesters, flash } = usePage<Props>().props as unknown as Props;
     const semesterList  = semesters ?? [];
 
     const [open, setOpen]     = useState(false);
@@ -119,6 +122,13 @@ export default function SemesterIndex() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Semesters" />
             <div className="flex flex-1 flex-col gap-6 p-6">
+
+                {/* Flash success banner — shown after add, update, toggle, and delete */}
+                {flash?.success && (
+                    <div className="rounded-lg bg-green-50 border border-green-300 p-4 text-green-700 font-medium">
+                        ✓ {flash.success}
+                    </div>
+                )}
 
                 <Card className="p-6">
                     <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
