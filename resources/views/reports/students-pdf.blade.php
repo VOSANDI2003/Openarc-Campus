@@ -16,7 +16,7 @@
 <body>
     <h1>OpenArc Campus – Student List Report</h1>
     <p class="meta">
-        Generated: {{ now()->format('Y-m-d H:i') }} &nbsp;|&nbsp;
+        Generated: {{ now()->format('Y-m-d') }} &nbsp;|&nbsp;
         Total students: {{ $students->count() }}
     </p>
 

@@ -17,7 +17,7 @@
 <body>
     <h1>OpenArc Campus – Enrollment Summary Report</h1>
     <p class="meta">
-        Generated: {{ now()->format('Y-m-d H:i') }}
+        Generated: {{ now()->format('Y-m-d') }}
         @if($academicYear) &nbsp;|&nbsp; Academic Year: {{ $academicYear }} @endif
         &nbsp;|&nbsp; Total enrolled: {{ $totalEnrolled }}
     </p>
